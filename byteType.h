@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include <math.h>
 
 /*
     ENDIAN-NESS:
@@ -25,46 +26,36 @@ void printByte(struct BYTE_TYPE input);
 
 void assignByteByInt(int value, struct BYTE_TYPE *input)
 {
-  input->bit[0] = value / 128;
-  if(value >= 128)
+    int current, powr = 7;
+
+    for(int i = 0; i < 8; i++)
+    {
+      current = pow(2, powr);
+      input->bit[i] = value / current;
+
+      if(value >= current)
+      {
+        value -= current;
+      }
+      powr -= 1;
+    }
+}
+
+int byteToInt(struct BYTE_TYPE input)
+{
+  int total = 0, powr = 7;
+
+  for(int i = 0; i < 8; i++)
   {
-    value -= 128;
+    if(input.bit[i])
+    {
+      total += pow(2, powr);
+    }
+
+    powr -= 1;
   }
-  input->bit[1] = value / 64;
-  if(value >= 64)
-  {
-    value -= 64;
-  }
-  input->bit[2] = value / 32;
-  if(value >= 32)
-  {
-    value -= 32;
-  }
-  input->bit[3] = value / 16;
-  if(value >= 16)
-  {
-    value -= 16;
-  }
-  input->bit[4] = value / 8;
-  if(value >= 8)
-  {
-    value -= 8;
-  }
-  input->bit[5] = value / 4;
-  if(value >= 4)
-  {
-    value -= 4;
-  }
-  input->bit[6] = value / 2;
-  if(value >= 2)
-  {
-    value -= 2;
-  }
-  input->bit[7] = value / 1;
-  if(value >= 1)
-  {
-    value -= 1;
-  }
+
+  return total;
 }
 
 bool getBit(int target, struct BYTE_TYPE input)
