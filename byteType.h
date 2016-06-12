@@ -21,6 +21,7 @@ struct BYTE_TYPE
 {
   bool bit[8];
 };
+void printByte(struct BYTE_TYPE input);
 
 void assignByteByInt(int value, struct BYTE_TYPE *input)
 {
@@ -71,19 +72,19 @@ bool getBit(int target, struct BYTE_TYPE input)
   return(input.bit[target]);
 }
 
-void copyByte(struct BYTE_TYPE dest, struct BYTE_TYPE input)
+void copyByte(struct BYTE_TYPE *dest, struct BYTE_TYPE input)
 {
   //I believe doing this by hand will be faster than
   // using a for loop (eww jumps!)
 
-  dest.bit[0] = input.bit[0];
-  dest.bit[1] = input.bit[1];
-  dest.bit[2] = input.bit[2];
-  dest.bit[3] = input.bit[3];
-  dest.bit[4] = input.bit[4];
-  dest.bit[5] = input.bit[5];
-  dest.bit[6] = input.bit[6];
-  dest.bit[7] = input.bit[7];
+  dest->bit[0] = input.bit[0];
+  dest->bit[1] = input.bit[1];
+  dest->bit[2] = input.bit[2];
+  dest->bit[3] = input.bit[3];
+  dest->bit[4] = input.bit[4];
+  dest->bit[5] = input.bit[5];
+  dest->bit[6] = input.bit[6];
+  dest->bit[7] = input.bit[7];
 }
 
 struct BYTE_TYPE returnMaskedValue(int mask, struct BYTE_TYPE input)
@@ -119,12 +120,14 @@ void arithShiftL(int numShifts, struct BYTE_TYPE *input)
 
   for(i = 0; i < numShifts; i++)
   {
+    carry = input->bit[0];
+
     for(q = 0; q < 7; q++)
     {
-      carry = input->bit[0];
       input->bit[q] = input->bit[q + 1];
-      input->bit[7] = carry;
     }
+
+    input->bit[7] = carry;
   }
 }
 
@@ -135,21 +138,24 @@ void arithShiftR(int numShifts, struct BYTE_TYPE *input)
 
   for(i = 0; i < numShifts; i++)
   {
+    carry = input->bit[7];
+
     for(q = 7; q > 0; q--)
     {
-      carry = input->bit[7];
       input->bit[q] = input->bit[q - 1];
-      input->bit[0] = carry;
     }
+
+    input->bit[0] = carry;
   }
 }
 
 void f0LogicalShiftL(int numShifts, struct BYTE_TYPE *input)
 {
   struct BYTE_TYPE carboncopy;
-  int i, q = 0;
+  int i, q = 0, z;
 
-  copyByte(carboncopy, *input);
+  assignByteByInt(0x00, &carboncopy);
+  copyByte(&carboncopy, *input);
 
   for( i = numShifts; i < 8; i++)
   {
@@ -158,18 +164,19 @@ void f0LogicalShiftL(int numShifts, struct BYTE_TYPE *input)
   }
 
   //Fill 0s into remaining spots
-  for(q = q; q < 8; q++)
+  for(z = q; z < 8; z++)
   {
-    input->bit[q] = 0;
+    input->bit[z] = 0;
   }
 }
 
 void f1LogicalShiftL(int numShifts, struct BYTE_TYPE *input)
 {
   struct BYTE_TYPE carboncopy;
-  int i, q = 0;
+  int i, q = 0, z;
 
-  copyByte(carboncopy, *input);
+  assignByteByInt(0x00, &carboncopy);
+  copyByte(&carboncopy, *input);
 
   for( i = numShifts; i < 8; i++)
   {
@@ -178,9 +185,9 @@ void f1LogicalShiftL(int numShifts, struct BYTE_TYPE *input)
   }
 
   //Fill 0s into remaining spots
-  for(q = q; q < 8; q++)
+  for(z = q; z < 8; z++)
   {
-    input->bit[q] = 1;
+    input->bit[z] = 1;
   }
 }
 
@@ -189,7 +196,8 @@ void f0LogicalShiftR(int numShifts, struct BYTE_TYPE *input)
   struct BYTE_TYPE carboncopy;
   int i, q = 0;
 
-  copyByte(carboncopy, *input);
+  assignByteByInt(0x00, &carboncopy);
+  copyByte(&carboncopy, *input);
 
   for( i = numShifts; i < 8; i++)
   {
@@ -209,7 +217,8 @@ void f1LogicalShiftR(int numShifts, struct BYTE_TYPE *input)
   struct BYTE_TYPE carboncopy;
   int i, q = 0;
 
-  copyByte(carboncopy, *input);
+  assignByteByInt(0x00, &carboncopy);
+  copyByte(&carboncopy, *input);
 
   for( i = numShifts; i < 8; i++)
   {
