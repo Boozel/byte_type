@@ -22,6 +22,7 @@ struct BYTE_TYPE
 {
   bool bit[8];
 };
+
 void printByte(struct BYTE_TYPE input);
 
 void assignByteByInt(int value, struct BYTE_TYPE *input)
@@ -61,6 +62,21 @@ int byteToInt(struct BYTE_TYPE input)
 bool getBit(int target, struct BYTE_TYPE input)
 {
   return(input.bit[target]);
+}
+
+struct BYTE_TYPE addBytes(struct BYTE_TYPE inputL, struct BYTE_TYPE inputR)
+{
+  struct BYTE_TYPE returnValue;
+  int i;
+
+  assignByteByInt(0x00, &returnValue);
+
+  for(i = 7; i > 0; i--)
+  {
+    returnValue.bit[i] = inputL.bit[i] + inputR.bit[i];
+  }
+
+  return returnValue;
 }
 
 void copyByte(struct BYTE_TYPE *dest, struct BYTE_TYPE input)
